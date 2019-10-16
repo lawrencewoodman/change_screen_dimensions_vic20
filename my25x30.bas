@@ -1,55 +1,71 @@
-   10 rem lower end of basic to $1800
-   20 poke 55,0:poke 56,24
-   30 poke 51,0:poke 52,24
+   10 print "{clr}"
+   20 if peek(36869)=192 then goto 200: rem if ram >= 8kb
 
-  100 rem save screen values
-  110 da=peek(36867)
-  120 db=peek(36866)
-  130 dc=peek(36869)
-  140 dd=peek(36864)
-  150 de=peek(36865)
+  100 rem set up for <8kb systems
+  110 rem lower end of basic to $1800
+  120 print "config: ram < 8kb":print
+  130 poke 55,0:poke 56,24
+  140 poke 51,0:poke 52,24
+  150 sm=6144:rem screen map location
+  160 goto 300
 
-  200 print "{clr}screen width?"
-  210 input sw
-  220 print "screen height?"
-  230 input sh
+  200 rem set up for >=8kb systems
+  210 print "config: ram >= 8kb":print
+  220 sm=4096:rem screen map location
 
-  300 gosub 1000
-  310 gosub 3000
+  300 rem save screen values
+  310 da=peek(36867)
+  320 db=peek(36866)
+  330 dc=peek(36869)
+  340 dd=peek(36864)
+  350 de=peek(36865)
 
-  400 rem print hello worlds
-  410 pc=0
-  420 for py=1 to sh-2
-  430 px=sw-13:st$="Hello World!":gosub 5000
-  440 pc=pc+1
-  450 if pc=1 then pc=2
-  460 if pc>7 then pc=2
-  470 next py
+  400 print "screen width";
+  410 input sw
+  420 print "screen height";
+  430 input sh
+  440 if sm=4096 and peek(43)+peek(44)*256-sm > sw*sh then 500
+  450 print:print "error:"
+  460 print "{red} screen map too small"
+  460 print " move bottom of basic{blue}"
+  470 end
 
-  500 rem wait for a key
-  520 pc=0:px=(sw-13)/2:py=sh-1:st$="Press any key":gosub 5000
-  540 input a$
+  500 gosub 1000
+  510 gosub 3000
 
-  600 gosub 6000
-  610 end
+  600 rem print hello worlds
+  610 pc=0
+  620 for py=1 to sh-2
+  630 px=sw-13:st$="Hello World!":gosub 5000
+  640 pc=pc+1
+  650 if pc=1 then pc=2
+  660 if pc>7 then pc=2
+  670 next py
+
+  700 rem wait for a key
+  710 pc=0:px=(sw-13)/2:py=sh-1:st$="Press any key":gosub 5000
+  720 get a$:if a$="" then 720
+
+  800 gosub 6000
+  810 end
 
  1000 rem expand scr
  1010 poke 36867,(peek(36867)and 128)or (sh*2)
  1020 poke 36866,sw
- 1030 poke 36869,224
+ 1030 if peek(36869)=240 then poke 36869,224
  1040 if sw>=23 then poke 36864,peek(36864)-(sw-23)*2: rem move horizontal origin
  1050 if sh>=22 then poke 36865,peek(36865)-(sh-22)*2: rem move vertical origin
  1060 return
 
  2000 rem print char
  2001 rem args: px,py,ps,pc
- 2010 poke 6144+px+(py*sw),ps
+ 2010 poke sm+px+(py*sw),ps
  2020 poke 37888+px+(py*sw),pc
  2030 return
 
  3000 rem clear screen
  3010 for i=0 to (sw*sh)-1
- 3020 poke 6144+i,32:poke 37888+i,6
+ 3020 poke sm+i,32:poke 37888+i,6
  3030 next i
  3040 return
 
@@ -80,3 +96,5 @@
  6030 poke 36869,dc
  6040 poke 36864,dd
  6050 poke 36865,de
+ 6060 if sm=4096 then print "{clr}"
+ 6070 return
