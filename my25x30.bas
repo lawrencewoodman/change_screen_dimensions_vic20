@@ -1,64 +1,60 @@
    10 print "{clr}"
    20 if peek(36869)=192 then goto 200: rem if ram >= 8kb
 
-  100 rem set up for <8kb systems
-  110 rem lower end of basic to $1800
-  120 print "config: ram < 8kb":print
-  130 poke 55,0:poke 56,24
-  140 poke 51,0:poke 52,24
-  150 sm=6144:rem screen map location
-  160 goto 300
+  100 print "config: ram < 8kb":print
+  110 poke 55,0:poke 56,24:rem lower end of basic to $1800
+  120 poke 51,0:poke 52,24
+  130 sm=6144:rem screen map location
+  140 goto 300
 
-  200 rem set up for >=8kb systems
-  210 print "config: ram >= 8kb":print
-  220 sm=4096:rem screen map location
+  200 print "config: ram >= 8kb"
+  210 print "membot:";(peek(43)+peek(44)*256):print
+  220 sm=4096
+  230 if peek(43)<>1 and peek(44)<>18 then 300
+  240 print:print "move basic y/n";:input y$
+  250 if y$="n" then 300:if y$<>"y" then 240
+  260 poke 783,0:poke 781,133:poke 782,19:sys 65436
+  270 print:print "reload program":print "after reset":print:print "*** press any key ***"
+  280 input a$:sys 58232
 
-  300 rem save screen values
-  310 da=peek(36867)
-  320 db=peek(36866)
-  330 dc=peek(36869)
-  340 dd=peek(36864)
-  350 de=peek(36865)
+  300 da=peek(36867):db=peek(36866)
+  310 dc=peek(36869):dd=peek(36864):de=peek(36865)
 
-  400 print "screen width";
-  410 input sw
-  420 print "screen height";
-  430 input sh
+  400 print "screen width";: input sw
+  410 print "screen height";: input sh
+  420 print "x tv offset";: input ox
+  430 print "y tv offset";: input oy
   440 if sm=4096 and peek(43)+peek(44)*256-sm > sw*sh then 500
-  450 print:print "error:"
-  460 print "{red} screen map too small"
-  460 print " move bottom of basic{blue}"
-  470 end
+  450 goto 500
+  460 print:print "error:"
+  470 print "{red} screen map too small"
+  480 print " move bottom of basic{blue}"
+  490 end
 
   500 gosub 1000
   510 gosub 3000
 
-  600 rem print hello worlds
-  610 pc=0
-  620 for py=1 to sh-2
-  630 px=sw-13:st$="Hello World!":gosub 5000
-  640 pc=pc+1
-  650 if pc=1 then pc=2
-  660 if pc>7 then pc=2
-  670 next py
+  600 pc=0
+  610 for py=1 to sh-2
+  620 px=sw-13:st$="Hello World!":gosub 5000
+  630 pc=pc+1
+  640 if pc=1 then pc=2
+  650 if pc>7 then pc=2
+  660 next py
 
-  700 rem wait for a key
-  710 pc=0:px=(sw-13)/2:py=sh-1:st$="Press any key":gosub 5000
-  720 get a$:if a$="" then 720
+  700 pc=0:px=(sw-13)/2:py=sh-1:st$="Press any key":gosub 5000
+  710 get a$:if a$="" then 700
 
-  800 gosub 6000
-  810 end
+  800 gosub 6000:end
 
- 1000 rem expand scr
- 1010 poke 36867,(peek(36867)and 128)or (sh*2)
- 1020 poke 36866,sw
- 1030 if peek(36869)=240 then poke 36869,224
- 1040 if sw>=23 then poke 36864,peek(36864)-(sw-23)*2: rem move horizontal origin
- 1050 if sh>=22 then poke 36865,peek(36865)-(sh-22)*2: rem move vertical origin
- 1060 return
+ 1000 poke 36867,(peek(36867)and 128)or (sh*2)
+ 1010 poke 36866,sw
+ 1020 if peek(36869)=240 then poke 36869,224
+ 1030 poke 36864,peek(36864)+ox
+ 1040 poke 36865,peek(36865)+oy
+ 1050 return
 
- 2000 rem print char
- 2001 rem args: px,py,ps,pc
+ 2000 rem print char - args: px,py,ps,pc
  2010 poke sm+px+(py*sw),ps
  2020 poke 37888+px+(py*sw),pc
  2030 return
@@ -81,8 +77,7 @@
  4080 if ac=255 then sc=30
  4100 return
 
- 5000 rem print string
- 5001 rem args: st$, px, py, pc
+ 5000 rem print string - args: st$, px, py, pc
  5010 for i=1 to len(st$)
  5020 ac=asc(mid$(st$,i,1)):gosub 4000
  5030 ps=sc:gosub 2000
@@ -90,11 +85,7 @@
  5050 next i
  5060 return
 
- 6000 rem restore screen and quit
- 6010 poke 36867,da
- 6020 poke 36866,db
- 6030 poke 36869,dc
- 6040 poke 36864,dd
- 6050 poke 36865,de
- 6060 if sm=4096 then print "{clr}"
- 6070 return
+ 6000 poke 36867,da:poke 36866,db
+ 6010 poke 36869,dc:poke 36864,dd:poke 36865,de
+ 6020 if sm=4096 then print "{clr}"
+ 6030 return
