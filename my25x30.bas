@@ -40,11 +40,11 @@
   610 for py=1 to sh-2
   620 px=sw-13:st$="Hello World!":gosub 5000
   630 pc=pc+1:if pc=1 then pc=2
-  640:if pc>7 then pc=2
+  640 if pc>7 then pc=2
   650 next py
 
   700 pc=0:px=(sw-13)/2:py=sh-1:st$="Press any key":gosub 5000
-  710 get a$:if a$="" then 700
+  710 get a$:if a$="" then 710
 
   800 gosub 6000:end
 
