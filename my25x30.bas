@@ -21,7 +21,7 @@
   280 print:print "{red}reload program":print "after reset{blue}"
   290 input a$:sys 58232
 
-  300 da=peek(36867):db=peek(36866):dc=peek(36869)
+  300 da=peek(36866):db=peek(36867):dc=peek(36869)
   310 dd=peek(36864):de=peek(36865)
 
   410 print "screen width";: input sw:print "screen height";: input sh
@@ -85,6 +85,6 @@
  5040 next i
  5050 return
 
- 6000 poke 36867,da:poke 36866,db:poke 36869,dc
+ 6000 poke 36866,da:poke 36867,db:poke 36869,dc
  6010 poke 36864,dd:poke 36865,de
  6020 return
