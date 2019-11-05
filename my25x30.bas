@@ -3,10 +3,10 @@
 
   100 print "config: ram < 8kb":print
   110 print "memtop:";peek(55)+peek(56)*256:print
-  120 print:print "lower basic y/n";:input y$
+  120 print:print "lower basic top y/n";:input y$
   130 if y$="n" then sm=7680:cm=38400:goto 300
   140 if y$<>"y" then 120
-  150 poke 56,0:poke 56,28:poke 51,0:poke 52,28:clr
+  150 poke 55,0:poke 56,28:poke 51,0:poke 52,28:clr
   160 sm=7168:cm=37888
   170 goto 300
 
@@ -46,7 +46,7 @@
   700 pc=0:px=(sw-13)/2:py=sh-1:st$="Press any key":gosub 5000
   710 get a$:if a$="" then 710
 
-  800 gosub 6000:end
+  800 gosub 6000:print "{clr}":end
 
  1000 poke 36867,(peek(36867)and 128)or (sh*2)
  1010 if sm=7168 then poke 36869,240
@@ -87,5 +87,4 @@
 
  6000 poke 36867,da:poke 36866,db:poke 36869,dc
  6010 poke 36864,dd:poke 36865,de
- 6020 if sm=4096 then print "{clr}"
- 6030 return
+ 6020 return
