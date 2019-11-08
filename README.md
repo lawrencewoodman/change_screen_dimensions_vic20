@@ -1,7 +1,7 @@
 change_screen_dimensions_vic20
 ==============================
 
-Two programs from the article [Changing the Screen Dimensions on the Commodore VIC-20](https://techtinkering.com/articles/changing-the-screen-dimensions-on-the-commodore-vic-20/).
+Two programs from the article [Changing the Screen Dimensions on the Commodore VIC-20](https://techtinkering.com/articles/changing-the-screen-dimensions-on-the-commodore-vic-20/).  Please see this article for information about how they work.
 
 The programs Basic source code is in _src/_ and the resulting _.prg_ files are in _bin/_
 
